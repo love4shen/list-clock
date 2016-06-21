@@ -24,7 +24,7 @@ class AlarmRows extends Component {
       let start = currentLower < min ?  min : currentLower;
       let end = currentUpper > max ?  max : currentUpper;
 
-      const alarmStepDiffs: any = (new Array(Math.floor((end - start)*60/step) + 1)) // generate alarm numbers
+      const alarmStepDiffs: any = (new Array(Math.floor((end - start + 1)*60/step) + 1)) // generate alarm numbers
       .fill(1) // be ready for map
       .map((ml, i) => i*step) // map to minites intervals
       .map((timeStep) => { // map to real time w/ hour and min

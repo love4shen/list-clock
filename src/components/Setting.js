@@ -15,37 +15,46 @@ import {
 import SettingRows from './SettingRows.js';
 
 class Setting extends Component {
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.intervalUpdate = props.intervalUpdate;
+    this.intervalUpdate = props.intervalUpdate;
 
-		console.log('dodod', props.intervals.morningCurrentLower)
-		
-	}
+    this.intervalUpdateHelper = this.intervalUpdateHelper.bind(this);
 
-	intervalUpdateHelper(obj, val) {
-		this.setState({});
-		return (obj, val) => this.intervalUpdate(obj, val);
-	}
+    this.updateNext = null;
+
+  }
+
+  intervalUpdateHelper(obj, val, updateNext) {
+    //this.setState({});
+    this.updateNext = updateNext;
+    this.intervalUpdate(obj, val);
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    this.settingNav.replace({
+      component: SettingRows,
+      title: 'Setting',
+      passProps: nextProps,
+    })
+  }
 
 
 
   render() {
-		const self = this;
-
-		console.log('eeee')
+    const self = this;
 
     return (
       <NavigatorIOS
-			ref={c => self.settingNav = c}
-      style={styles.wrapper}
-      initialRoute={{
-        component: SettingRows,
-        title: 'Setting',
-        passProps: Object.assign({}, this.props, {intervalUpdate: this.intervalUpdateHelper})
-      }}
-      />
+        ref={c => self.settingNav = c}
+        style={styles.wrapper}
+        initialRoute={{
+          component: SettingRows,
+          title: 'Setting',
+          passProps: Object.assign({}, this.props, {intervalUpdate: this.intervalUpdateHelper})
+        }}
+        />
     );
   }
 }

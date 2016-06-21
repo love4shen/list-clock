@@ -33,12 +33,19 @@ class SettingRowDetail extends Component {
 		this.intervalUpdate = intervalUpdate;
 
 		this.intervalUpdateHelp = this.intervalUpdateHelp.bind(this);
+
+		console.log('constructor func')
   }
 
   intervalUpdateHelp(key: string, val: any) {
 		this.intervalUpdate(key, val);
 
-		this.setState({currentVal: val});
+		let updatedState = {currentVal: val};
+		if (key.includes('Lower')) {
+			updatedState['currentLower'] = val;
+		}
+
+		this.setState(updatedState);
 
   }
 
@@ -65,7 +72,7 @@ class SettingRowDetail extends Component {
           value={i + 1}
           label={(i + 1).toString()}
           />
-			)) : (new Array(upper - lower)).fill(1).map((ul, i) => (
+			)) : (new Array(upper - lower + 1)).fill(1).map((ul, i) => (
 	        <PickerIOS.Item
 	        key={`${this.state.intervalKey}Start${i + lower}`}
 	        value={i + lower}
