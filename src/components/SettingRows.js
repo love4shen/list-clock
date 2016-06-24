@@ -21,41 +21,37 @@ class SettingRows extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      intervals: props.intervals,
-    }
-
-    this.intervalUpdate = props.intervalUpdate;
-
-    this.intervalUpdateHelp = this.intervalUpdateHelp.bind(this);
-
-    console.log('constructor upp')
+    this.intervals = props.intervals;
   }
 
-  intervalUpdateHelp(key: string, val: any) {
-    this.intervalUpdate(key, val, this.updatePropsFromPreviousStack);
+  render() {
 
-    // this.props.navigator.replacePrevious({
-    //   component: SettingRowDetail,
-    //   title: 'Setting',
-    //   passProps: Object.assign({}, this.props, {[key]: val}),
-    // });
-
-    this.setState({intervals: Object.assign({}, this.state.intervals, {[key]: val})});
-
-
-  }
-
-  updatePropsFromPreviousStack(newProps) {
-    this.setState({...newProps});
+    return (
+      <TableView style={styles.wrapper}
+        allowsToggle={true}
+        allowsMultipleSelection={true}
+        tableViewStyle={TableView.Consts.Style.Plain}
+        tableViewCellStyle={TableView.Consts.CellStyle.Value1}
+        onPress={(evt) => this._rowOnPress(evt, this.props)}>
+        <TableView.Section label="Alarm Range and Step" arrow={true}>
+          {this.populateIntervalSettingItem(this.intervals)}
+        </TableView.Section>
+        <TableView.Section label="Credits & Extra">
+          <TableView.Item>Author</TableView.Item>
+          <TableView.Item detail="0.0.1">Version</TableView.Item>
+        </TableView.Section>
+      </TableView>
+    );
   }
 
   _rowOnPress(evt: Object, props: Object) {
-    this.props.navigator.push({
-      component: SettingRowDetail,
+    const {nav, index} = props;
+
+    nav.push(Object.assign({}, props, {
+      index: index + 1,
       title: evt.label,
-      passProps: Object.assign({}, props, {intervalKey: evt.value, intervalUpdate: this.intervalUpdateHelp}),
-    });
+      intervalKey: evt.value,
+    }));
   }
 
   populateIntervalSettingItem(intervals: Object): Array<Object> {
@@ -77,30 +73,10 @@ class SettingRows extends Component {
         <TableView.Item value={key} detail={detail} key={key}>{label}</TableView.Item>
       );
     })
-
-  }
-
-  render() {
-    console.log('render upp')
-
-    return (
-      <TableView style={styles.wrapper}
-        allowsToggle={true}
-        allowsMultipleSelection={true}
-        tableViewStyle={TableView.Consts.Style.Plain}
-        tableViewCellStyle={TableView.Consts.CellStyle.Value1}
-        onPress={(evt) => this._rowOnPress(evt, this.props)}>
-        <TableView.Section label="Alarm Range and Step" arrow={true}>
-          {this.populateIntervalSettingItem(this.state.intervals)}
-        </TableView.Section>
-        <TableView.Section label="Credits & Extra">
-          <TableView.Item>Author</TableView.Item>
-          <TableView.Item detail="0.0.1">Version</TableView.Item>
-        </TableView.Section>
-      </TableView>
-    );
   }
 }
+
+
 
 const styles = StyleSheet.create({
   wrapper: {

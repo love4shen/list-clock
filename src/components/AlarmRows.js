@@ -19,12 +19,12 @@ class AlarmRows extends Component {
   render() {
     const rawData = ((props) => {
 
-      const {essential, range, step, title, currentLower, currentUpper, max, min,} = props;
+      const {essential, range, step, currentLower, currentUpper, max, min,} = props;
 
       let start = currentLower < min ?  min : currentLower;
       let end = currentUpper > max ?  max : currentUpper;
 
-      const alarmStepDiffs: any = (new Array(Math.floor((end - start + 1)*60/step) + 1)) // generate alarm numbers
+      const alarmStepDiffs: any = (new Array(Math.floor((end - start)*60/step) + 1)) // generate alarm numbers
       .fill(1) // be ready for map
       .map((ml, i) => i*step) // map to minites intervals
       .map((timeStep) => { // map to real time w/ hour and min
@@ -42,6 +42,7 @@ class AlarmRows extends Component {
       <ListView
       dataSource={dataSource}
       renderRow={(alarmTime) => <AlarmRow alarmTime={alarmTime}/>}
+      style={styles.alarmsContainer}
       />
     );
   }
@@ -54,6 +55,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1 / PixelRatio.get(),
     borderBottomColor: '#CDCDCD',
   },
+  alarmsContainer: {
+    backgroundColor: '#EAEAEA',
+  }
 });
 
 export default AlarmRows;

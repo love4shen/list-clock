@@ -33,8 +33,6 @@ class SettingRowDetail extends Component {
 		this.intervalUpdate = intervalUpdate;
 
 		this.intervalUpdateHelp = this.intervalUpdateHelp.bind(this);
-
-		console.log('constructor func')
   }
 
   intervalUpdateHelp(key: string, val: any) {
@@ -50,9 +48,6 @@ class SettingRowDetail extends Component {
   }
 
   render() {
-
-		console.log('render func')
-
 		const lower = this.state.intervalKey.includes('Lower') ? this.state.min : this.state.currentLower;
 		const upper = this.state.max;
 
@@ -89,7 +84,8 @@ class SettingRowDetail extends Component {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    paddingBottom: 64,
+    paddingTop: 64,
+    paddingBottom: 50,
     backgroundColor: '#F0EFF5',
   },
   rowView: {

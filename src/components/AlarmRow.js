@@ -29,7 +29,7 @@ const AlarmRow = React.createClass({
   alarmTimeOut: null,
 
   toggleAlarm: function(status: boolean, alarmTime: Object) {
-    if (!status) {
+    if (!!status) {
       this.clearTimeout(this.alarmTimeOut);
 
       return;
@@ -52,6 +52,8 @@ const AlarmRow = React.createClass({
     if (difference < 0) {
       difference = 24*3600*1000 + difference;
     }
+
+    console.log(difference/1000);
 
     this.alarmTimeOut = this.setTimeout(
       () => {
@@ -79,8 +81,8 @@ const AlarmRow = React.createClass({
       <Switch
       style={styles.rowSwitch}
       onValueChange={(value) => {
-        this.setState({trueSwitchIsOn: value});
         this.toggleAlarm(this.state.trueSwitchIsOn, {alarmHour: hour, alarmMinute: minute});
+        this.setState({trueSwitchIsOn: value});
       }}
       value={this.state.trueSwitchIsOn} />
       </View>

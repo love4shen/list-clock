@@ -12,15 +12,52 @@ import {
   AlertIOS,
   TouchableHighlight,
   NavigatorIOS,
+  Navigator,
+  TouchableOpacity,
+  PixelRatio,
 } from 'react-native';
+
 import AlarmRows from './src/components/AlarmRows.js';
 import Setting from './src/components/Setting.js';
+import SettingRows from './src/components/SettingRows.js';
+import SettingRowDetail from './src/components/SettingRowDetail.js';
+
 
 class ListClock extends Component {
   constructor() {
     super();
 
     this.intervalUpdate = this.intervalUpdate.bind(this);
+
+    this.NavigationBarRouteMapper = {
+      Title: (route, navigator, index, navState) => {
+        return (
+          <Text style={[styles.navBarText, styles.navBarTitleText]}>
+            {route.title}
+          </Text>
+        );
+      },
+      LeftButton: function(route, navigator, index, navState) {
+        if (index === 0) {
+          return null;
+        }
+
+        var previousRoute = navState.routeStack[index - 1];
+        return (
+          <TouchableOpacity
+            onPress={() => navigator.pop()}
+            style={styles.navBarLeftButton}>
+            <Text style={[styles.navBarText, styles.navBarButtonText]}>
+              {previousRoute.title}
+            </Text>
+          </TouchableOpacity>
+        );
+      },
+
+      RightButton: function(route, navigator, index, navState) {
+        return null;
+      },
+    }
 
     this.state = {
       selectedTab: 'settingTab',
@@ -35,61 +72,37 @@ class ListClock extends Component {
         noonMax: 15,
         noonMin: 11,
         noonStep: 30,
-        eveningCurrentLower: 18,
+        eveningCurrentLower: 17,
         eveningCurrentUpper: 21,
         eveningMax: 24,
         eveningMin: 15,
-        eveningStep: 30,
+        eveningStep: 20,
       }
     }
   }
 
   intervalUpdate(target: string, value: any) {
+    const {intervals} = this.state;
+
     let setting = {};
     setting[target] = value;
 
-    const newIntervals = Object.assign({}, this.state.intervals, setting);
-
-    if (this.morningNav) {
-      this.morningNav.replace({
-        title: 'Morning Clock',
-        component: AlarmRows,
-        passProps: {
-          currentLower: newIntervals.morningCurrentLower,
-          currentUpper: newIntervals.morningCurrentUpper,
-          max: newIntervals.morningMax,
-          min: newIntervals.morningMin,
-          step: newIntervals.morningStep,
-          title: 'Morning Clock',
-        }
-      });
-    } else if (this.noonNav) {
-      this.noonNav.replace({
-        title: 'Evening Clock',
-        component: AlarmRows,
-        passProps: {
-          currentLower: newIntervals.noonCurrentLower,
-          currentUpper: newIntervals.noonCurrentUpper,
-          max: newIntervals.noonMax,
-          min: newIntervals.noonMin,
-          step: newIntervals.noonStep,
-          title: 'Noon Clock',
-        }
-      });
-    } else if (this.eveningNav) {
-      this.eveningNav.replace({
-        title: 'Evening Clock',
-        component: AlarmRows,
-        passProps: {
-          currentLower: newIntervals.eveningCurrentLower,
-          currentUpper: newIntervals.eveningCurrentUpper,
-          max: newIntervals.eveningMax,
-          min: newIntervals.eveningMin,
-          step: newIntervals.eveningStep,
-          title: 'Evening Clock',
-        }
-      });
+    if (target.includes('Lower')) {
+      const currUpperKey = target.replace('Lower', 'Upper');
+      if (intervals[currUpperKey] < value) {
+        setting[currUpperKey] = value;
+      }
     }
+
+    const newIntervals = Object.assign({}, intervals, setting);
+
+    this.navRef.replacePrevious({
+      name: 'Setting',
+      title: 'Setting',
+      index: 0,
+      intervals: newIntervals,
+      intervalUpdate: this.intervalUpdate,
+    });
 
     this.setState({intervals: newIntervals});
   }
@@ -110,23 +123,12 @@ class ListClock extends Component {
               selectedTab: 'morningTab',
             });
           }}>
-          <NavigatorIOS
-            ref={c => self.morningNav = c}
-            style={styles.wrapper}
-            initialRoute={{
-              component: AlarmRows,
-              title: 'Evening Clock',
-              passProps: {
-                essential: this.state.intervals.morningEssential,
-                range: this.state.intervals.morningRange,
-                currentLower: this.state.intervals.morningCurrentLower,
-                currentUpper: this.state.intervals.morningCurrentUpper,
-                max: this.state.intervals.morningMax,
-                min: this.state.intervals.morningMin,
-                step: this.state.intervals.morningStep,
-                title: 'Morning Clock',
-              }
-            }}
+          <AlarmRows
+            currentLower={this.state.intervals.morningCurrentLower}
+            currentUpper={this.state.intervals.morningCurrentUpper}
+            max={this.state.intervals.morningMax}
+            min={this.state.intervals.morningMin}
+            step={this.state.intervals.morningStep}
             />
         </TabBarIOS.Item>
         <TabBarIOS.Item
@@ -138,23 +140,12 @@ class ListClock extends Component {
               selectedTab: 'noonTab',
             });
           }}>
-          <NavigatorIOS
-            ref={c => self.noonNav = c}
-            style={styles.wrapper}
-            initialRoute={{
-              component: AlarmRows,
-              title: 'Noon Clock',
-              passProps: {
-                essential: this.state.intervals.noonEssential,
-                range: this.state.intervals.noonRange,
-                currentLower: this.state.intervals.noonCurrentLower,
-                currentUpper: this.state.intervals.noonCurrentUpper,
-                max: this.state.intervals.noonMax,
-                min: this.state.intervals.noonMin,
-                step: this.state.intervals.noonStep,
-                title: 'Noon Clock',
-              }
-            }}
+          <AlarmRows
+            currentLower={this.state.intervals.noonCurrentLower}
+            currentUpper={this.state.intervals.noonCurrentUpper}
+            max={this.state.intervals.noonMax}
+            min={this.state.intervals.noonMin}
+            step={this.state.intervals.noonStep}
             />
         </TabBarIOS.Item>
         <TabBarIOS.Item
@@ -166,23 +157,12 @@ class ListClock extends Component {
               selectedTab: 'eveningTab',
             });
           }}>
-          <NavigatorIOS
-            ref={c => self.eveningNav = c}
-            style={styles.wrapper}
-            initialRoute={{
-              component: AlarmRows,
-              title: 'Evening Clock',
-              passProps: {
-                essential: this.state.intervals.eveningEssential,
-                range: this.state.intervals.eveningRange,
-                currentLower: this.state.intervals.eveningCurrentLower,
-                currentUpper: this.state.intervals.eveningCurrentUpper,
-                max: this.state.intervals.eveningMax,
-                min: this.state.intervals.eveningMin,
-                step: this.state.intervals.eveningStep,
-                title: 'Evening Clock',
-              }
-            }}
+          <AlarmRows
+            currentLower={this.state.intervals.eveningCurrentLower}
+            currentUpper={this.state.intervals.eveningCurrentUpper}
+            max={this.state.intervals.eveningMax}
+            min={this.state.intervals.eveningMin}
+            step={this.state.intervals.eveningStep}
             />
         </TabBarIOS.Item>
         <TabBarIOS.Item
@@ -194,7 +174,51 @@ class ListClock extends Component {
               selectedTab: 'settingTab',
             });
           }}>
-          <Setting intervalUpdate={this.intervalUpdate} intervals={this.state.intervals} />
+          <Navigator
+            ref={(nav) => this.navRef = nav}
+            initialRoute={{
+              name: 'Setting',
+              title: 'Setting',
+              index: 0,
+              intervals: this.state.intervals,
+              intervalUpdate: this.intervalUpdate,
+            }}
+            renderScene={(route, nav) => {
+              switch (route.index) {
+                case 0:
+                return (
+                  <SettingRows
+                    style={styles.scene}
+                    intervals={this.state.intervals}
+                    intervalUpdate={route.intervalUpdate}
+                    nav={nav}
+                    index={route.index}
+                    />
+                )
+                case 1:
+                return (
+                  <SettingRowDetail
+                    style={styles.scene}
+                    intervals={this.state.intervals}
+                    intervalUpdate={route.intervalUpdate}
+                    nav={nav}
+                    intervalKey={route.intervalKey}
+                    index={route.index}
+                    />
+                )
+                default:
+                return (<View />)
+              }
+            }
+
+            }
+            navigationBar={
+              <Navigator.NavigationBar
+                routeMapper={this.NavigationBarRouteMapper}
+                style={styles.navBar}
+                />
+            }
+            />
         </TabBarIOS.Item>
       </TabBarIOS>
     );
@@ -213,6 +237,31 @@ const styles = StyleSheet.create({
   tabText: {
     color: '#333',
     margin: 50,
+  },
+  navBar: {
+    backgroundColor: '#fff',
+  },
+  navBarText: {
+    fontSize: 16,
+    marginVertical: 10,
+  },
+  navBarTitleText: {
+    color: '#373e4d',
+    fontWeight: '500',
+    marginVertical: 9,
+  },
+  navBarLeftButton: {
+    paddingLeft: 10,
+  },
+  navBarRightButton: {
+    paddingRight: 10,
+  },
+  scene: {
+    flex: 1,
+    paddingTop: 20,
+    backgroundColor: '#EAEAEA',
+    borderBottomWidth: 1 / PixelRatio.get(),
+    borderBottomColor: '#CDCDCD',
   },
 });
 
