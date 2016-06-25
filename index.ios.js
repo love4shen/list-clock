@@ -18,16 +18,16 @@ import {
 } from 'react-native';
 
 import AlarmRows from './src/components/AlarmRows.js';
-import Setting from './src/components/Setting.js';
+
 import SettingRows from './src/components/SettingRows.js';
 import SettingRowDetail from './src/components/SettingRowDetail.js';
+
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 class ListClock extends Component {
   constructor() {
     super();
-
-    this.intervalUpdate = this.intervalUpdate.bind(this);
 
     this.NavigationBarRouteMapper = {
       Title: (route, navigator, index, navState) => {
@@ -42,7 +42,7 @@ class ListClock extends Component {
           return null;
         }
 
-        var previousRoute = navState.routeStack[index - 1];
+        const previousRoute = navState.routeStack[index - 1];
         return (
           <TouchableOpacity
             onPress={() => navigator.pop()}
@@ -79,6 +79,8 @@ class ListClock extends Component {
         eveningStep: 20,
       }
     }
+
+    this.intervalUpdate = this.intervalUpdate.bind(this);
   }
 
   intervalUpdate(target: string, value: any) {
@@ -97,7 +99,6 @@ class ListClock extends Component {
     const newIntervals = Object.assign({}, intervals, setting);
 
     this.navRef.replacePrevious({
-      name: 'Setting',
       title: 'Setting',
       index: 0,
       intervals: newIntervals,
@@ -112,11 +113,11 @@ class ListClock extends Component {
 
     return (
       <TabBarIOS
-        tintColor="#fff"
-        barTintColor="#bbb" >
-        <TabBarIOS.Item
+        barTintColor="#f5f5f5"
+        >
+        <Icon.TabBarItemIOS
           title="Morning"
-          systemIcon="contacts"
+          iconName="battery-full"
           selected={this.state.selectedTab === 'morningTab'}
           onPress={() => {
             this.setState({
@@ -130,10 +131,10 @@ class ListClock extends Component {
             min={this.state.intervals.morningMin}
             step={this.state.intervals.morningStep}
             />
-        </TabBarIOS.Item>
-        <TabBarIOS.Item
+        </Icon.TabBarItemIOS>
+        <Icon.TabBarItemIOS
           title="Noon"
-          systemIcon="search"
+          iconName="sun-o"
           selected={this.state.selectedTab === 'noonTab'}
           onPress={() => {
             this.setState({
@@ -147,10 +148,10 @@ class ListClock extends Component {
             min={this.state.intervals.noonMin}
             step={this.state.intervals.noonStep}
             />
-        </TabBarIOS.Item>
-        <TabBarIOS.Item
+        </Icon.TabBarItemIOS>
+        <Icon.TabBarItemIOS
           title="Evening"
-          systemIcon="recents"
+          iconName="moon-o"
           selected={this.state.selectedTab === 'eveningTab'}
           onPress={() => {
             this.setState({
@@ -164,10 +165,10 @@ class ListClock extends Component {
             min={this.state.intervals.eveningMin}
             step={this.state.intervals.eveningStep}
             />
-        </TabBarIOS.Item>
-        <TabBarIOS.Item
+        </Icon.TabBarItemIOS>
+        <Icon.TabBarItemIOS
           title="Setting"
-          systemIcon="more"
+          iconName="gear"
           selected={this.state.selectedTab === 'settingTab'}
           onPress={() => {
             this.setState({
@@ -177,7 +178,6 @@ class ListClock extends Component {
           <Navigator
             ref={(nav) => this.navRef = nav}
             initialRoute={{
-              name: 'Setting',
               title: 'Setting',
               index: 0,
               intervals: this.state.intervals,
@@ -219,7 +219,7 @@ class ListClock extends Component {
                 />
             }
             />
-        </TabBarIOS.Item>
+        </Icon.TabBarItemIOS>
       </TabBarIOS>
     );
   }

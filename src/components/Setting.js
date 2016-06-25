@@ -40,8 +40,6 @@ class Setting extends Component {
     })
   }
 
-
-
   render() {
     const self = this;
 

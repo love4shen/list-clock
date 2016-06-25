@@ -45,6 +45,10 @@ class SettingRows extends Component {
   }
 
   _rowOnPress(evt: Object, props: Object) {
+    if (evt.value === undefined) {
+      return;
+    }
+    
     const {nav, index} = props;
 
     nav.push(Object.assign({}, props, {
