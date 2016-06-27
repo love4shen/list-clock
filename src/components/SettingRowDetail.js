@@ -44,7 +44,6 @@ class SettingRowDetail extends Component {
 		}
 
 		this.setState(updatedState);
-
   }
 
   render() {

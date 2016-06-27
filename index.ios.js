@@ -11,10 +11,10 @@ import {
   TabBarIOS,
   AlertIOS,
   TouchableHighlight,
-  NavigatorIOS,
   Navigator,
   TouchableOpacity,
   PixelRatio,
+  AsyncStorage,
 } from 'react-native';
 
 import AlarmRows from './src/components/AlarmRows.js';
@@ -60,27 +60,41 @@ class ListClock extends Component {
     }
 
     this.state = {
-      selectedTab: 'settingTab',
+      selectedTab: 'morningTab',
       intervals: {
-        morningCurrentLower: 7,
+        morningCurrentLower: 6,
         morningCurrentUpper: 10,
         morningMax: 11,
         morningMin: 0,
-        morningStep: 20,
+        morningStep: 30,
         noonCurrentLower: 12,
         noonCurrentUpper: 14,
         noonMax: 15,
         noonMin: 11,
         noonStep: 30,
-        eveningCurrentLower: 17,
+        eveningCurrentLower: 18,
         eveningCurrentUpper: 21,
         eveningMax: 24,
         eveningMin: 15,
-        eveningStep: 20,
+        eveningStep: 30,
       }
     }
 
     this.intervalUpdate = this.intervalUpdate.bind(this);
+  }
+
+  componentDidMount() {
+    AsyncStorage.getItem('intervals')
+    .then((value) => {
+      if (value) {
+        this.setState({intervals: JSON.parse(value)});
+      }
+    })
+    .done();
+  }
+
+  componentWillUnmount() {
+    AsyncStorage.setItem('intervals', JSON.stringify(this.state.intervals));
   }
 
   intervalUpdate(target: string, value: any) {
@@ -105,16 +119,14 @@ class ListClock extends Component {
       intervalUpdate: this.intervalUpdate,
     });
 
+    AsyncStorage.setItem('intervals', JSON.stringify(newIntervals));
     this.setState({intervals: newIntervals});
   }
 
   render() {
-    const self = this;
-
     return (
       <TabBarIOS
-        barTintColor="#f5f5f5"
-        >
+        barTintColor="#f5f5f5">
         <Icon.TabBarItemIOS
           title="Morning"
           iconName="battery-full"
@@ -211,18 +223,18 @@ class ListClock extends Component {
               }
             }
 
-            }
-            navigationBar={
-              <Navigator.NavigationBar
-                routeMapper={this.NavigationBarRouteMapper}
-                style={styles.navBar}
-                />
-            }
-            />
-        </Icon.TabBarItemIOS>
-      </TabBarIOS>
-    );
-  }
+          }
+          navigationBar={
+            <Navigator.NavigationBar
+              routeMapper={this.NavigationBarRouteMapper}
+              style={styles.navBar}
+              />
+          }
+          />
+      </Icon.TabBarItemIOS>
+    </TabBarIOS>
+  );
+}
 }
 
 const styles = StyleSheet.create({

@@ -53,8 +53,6 @@ const AlarmRow = React.createClass({
       difference = 24*3600*1000 + difference;
     }
 
-    console.log(difference/1000);
-
     this.alarmTimeOut = this.setTimeout(
       () => {
         AlertIOS.alert(

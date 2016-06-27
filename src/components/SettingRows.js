@@ -37,7 +37,7 @@ class SettingRows extends Component {
           {this.populateIntervalSettingItem(this.intervals)}
         </TableView.Section>
         <TableView.Section label="Credits & Extra">
-          <TableView.Item>Author</TableView.Item>
+          <TableView.Item detail="Yizheng Shen">Author</TableView.Item>
           <TableView.Item detail="0.0.1">Version</TableView.Item>
         </TableView.Section>
       </TableView>
@@ -48,7 +48,7 @@ class SettingRows extends Component {
     if (evt.value === undefined) {
       return;
     }
-    
+
     const {nav, index} = props;
 
     nav.push(Object.assign({}, props, {
