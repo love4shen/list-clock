@@ -56,7 +56,10 @@ const AlarmRow = React.createClass({
     this.alarmTimeOut = this.setTimeout(
       () => {
         AlertIOS.alert(
-          'Alarm'
+          'Alarm >_<',
+          undefined,
+          () => {
+          }
         );
 
         _self.setState({trueSwitchIsOn: false});

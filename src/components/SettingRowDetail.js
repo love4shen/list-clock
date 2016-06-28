@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Text,
   View,
-  AlertIOS,
   ScrollView,
   PixelRatio,
   PickerIOS,
